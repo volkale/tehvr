@@ -2,6 +2,6 @@
 
 Run
 
-  $ make report
+    $ make report
 
 to generate the pdf version of the article.
