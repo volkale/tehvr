@@ -1,0 +1,659 @@
+---
+title: "A bound on the Treatment Effect Heterogeneity using estimates on the Variability Ratio"
+author: Dr. Alexander Volkmann
+output: pdf_document
+bibliography: references.bibtex 
+---
+
+ 
+```{r include = FALSE}
+library(reticulate)
+use_python("/usr/local/bin/python")
+```
+
+# Abstract
+Recently, the variability ratio (VR) effect statistic [defined in @hedges1995sex; and proposed in @nakagawa2015meta]
+has been used [see
+@brugger2017heterogeneity;
+@winkelbeiner2019evaluation; @mccutcheon2019efficacy; @pillinger2019meta; 
+@mizuno2020heterogeneity; @rogdaki2020magnitude; @maslej2020individual; @brugger2020heterogeneity
+]
+in order to study treatment effect heterogeneity (TEH) and differences in variation between two groups.
+While a VR that is different from one
+is widely acknowledged to implicate an individual treatment effect the exact
+relationship between those two quantities is not discussed in detail. 
+
+The purpose of this note is to derive a precise connection between the TEH and the VR. 
+We derive an analytical equation that connects the two.
+Moreover, we provide an example simulation for which VR is equal to
+one and there exist TEH.  
+
+# Individual treatment effect
+
+The treatment effect of individual $i$ with respect to a given (medical) treatment is defined as 
+
+$$\delta_i = Y_{i}^1 - Y_{i}^0,$$
+
+where $Y_{i}^a$ denotes the potential outcome of individual $i$ with respect to
+treatment $a \in \{0,1\}$. The potential outcome $Y_i^a$ represents the outcome that
+the individual $i$ *would have* had, had the individual $i$ received the treatment $a$, irrespective of
+the *factual* treatment, the treatment that actually *was* received by the individual.
+Moreover, the notation reflects the fact that we make the SUTVA assumption,
+which allows us to write the potential outcomes for an individual $i$
+as a function of the individual's own treatment assignment alone rather
+than the treatment assignment of all individuals in the population.
+Mathematically, $Y_i^{a_1,...,a_i, ...} \equiv Y_i^{a_i}$.
+This assumption is not always valid. In case the treatment refers to a vaccination against
+a disease the assumptions is violated,
+since the effect of a potential vaccination of an individual $i$ depends on whether others have been vaccinated.
+
+The *fundamental problem of causal inference* [see @holland1986statistics], states that we can never
+observe both $Y_{i}^1$ and $Y_{i}^0$ at the same time.
+
+In the following we consider the so called super-population perspective, in which we view our
+sample $Y_{i}^0, Y_{i}^1$ of size $N$ as a random sample from an infinite population.
+More formally, we consider $Y_i^a$ to be realizations of a population level random variable $Y^a$.
+Similarly, $\delta_i$ are realizations of a population level random variable $\delta$.
+
+In summary, there are two levels of randomness that we consider.
+Firstly, we randomly draw individuals $i=1, ..., N$ from an infinite population,
+each individual having associated a pair $(Y_i^0, Y_i^1)$ of potential outcomes.
+Secondly, a predetermined number ($N_1 \in (0, N)$) of individuals get randomly assigned
+to treatment ($a=1$), the remaining ($N_0=N-N_1$) individuals get assigned to the
+control ($a=0$) group, and the associated outcomes $Y_i=Y_i^a$ are observed.
+The uncertainty in any type of estimate that results from these two levels of randomness may be referred to
+as sampling-based and design-based uncertainty, respectively [see @abadie2020sampling].
+
+
+We mention that there is an additional layer of randomness that might be considered.
+We could assume that for each individual $i$, $Y_{i}^a$ are random variables rather than mere
+realizations of a population level random variable $Y^a$.
+In this case one might refer to $\delta_i$ as the random treatment effect of the individual $i$.
+Realizations $y_i^a$ of $Y_{i}^a$ could be viewed as draws from
+a "*metaphorical population*, comprising the possible eventualities that
+might have occurred but mainly didn't" [see @spiegelhalter2019art]. Alternatively,
+the source for this part of the randomness could be a model for measurement error,
+epistemological uncertainty,
+or could reflect the assumption that the individual $i$ has a *truly* random outcome.
+
+
+## Treatment effect heterogeneity
+Treatment effect heterogeneity (TEH) is present if not all individuals have the same individual
+treatment effect, i.e. $\delta_i$ is not the same for all individuals.
+In the language of the super-population perspective this means that
+$Var(\delta) > 0$. Of course, in any practical situation it is impossible *not* to have TEH.
+The more interesting question to study is the question about the degree or the magnitude of TEH.
+This can be quantified by estimating the magnitude of $Var(\delta)$ or by identifying a relevant
+(w.r.t. the application at hand) subgroup $X$ of the population for which $Var(\delta|X)$ is large. 
+
+
+In the case of random individual treatment effect, TEH could be defined as the
+ variation between individuals of the average random individual treatment effect ($E[\delta_i]$).
+
+
+Due to the fundamental problem of causal inference it is not straightforward to measure
+the degree of TEH for a given treatment and population.
+
+## Variability Ratio 
+In this section we use the notation $Y_i(a)=Y_i^a$.
+We consider a random draw of individuals $i=1,...,N$ from an infinite super-population.
+
+We define the *variability ratio* $\nu$ [cf. @hedges1995sex] as
+$$\nu = \frac{\sigma_1}{\sigma_0},$$
+where $\sigma_a^2 = Var_{sp}(Y(a))$, for $a=0,1$, are the super-population variances.
+
+Since the super-population is assumed to be infinite and the treatment assignment is random we have
+[see @raudenbush1987examining] that, for sufficiently large $N_0 \geq N(\sigma_0)$ and $N_1 \geq N(\sigma_1)$
+an unbiased estimator of $\ln\nu$ is given by 
+$$\ln VR = \ln\left(\frac{s_1}{s_0}\right) + \frac{1}{2(N_1-1)} - \frac{1}{2(N_0-1)}.$$
+
+# Treatment effect heterogeneity and variability ratio
+
+## Change score
+
+Now, let us consider two time points $t=0$ (base) and $t=1$ (endpoint), and consider the
+potential outcomes $Y_{it}^a$ of individual $i$ at time $t$ with respect to the treatment $a$.
+We assume that $Y_{i0}^0=Y_{i0}^1$, i.e. there is no effect at base.
+We may then write
+
+\begin{align*}
+Y_{i1}^a 
+& = Y_{i0}^a + (Y_{i1}^0 - Y_{i0}^a) + a \cdot (Y_{i1}^1 - Y_{i1}^0) \\
+& = Y_{i0}^0 + (Y_{i1}^0 - Y_{i0}^0) + a \cdot (Y_{i1}^1 - Y_{i1}^0)
+\quad\text{(assuming that $Y_{i0}^0 \equiv Y_{i0}^1$)} \\
+& =^{def} \alpha_i + \tau_i + a \cdot \delta_i.
+\end{align*}
+
+In words, this means that we can decompose the
+potential outcome score $Y_{i1}^a$ of individual $i$ at endpoint ($t=1$)
+under treatment $a$ as the sum of the following quantities:
+
+- the base ($t=0$) score of individual $i$
+- the temporal change of score (aka the response) of individual $i$ under control
+- the treatment effect of individual $i$ in case $a=1$ and zero otherwise. 
+
+```{python, include=FALSE}
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
+fig, ax = plt.subplots(figsize=(10, 6), sharex='col', sharey='col')
+_ = ax.plot([0, 1], [1, 2], linestyle='-', color='k', label='control')
+_ = ax.plot([0, 1], [1, 4], linestyle='-', color='k', label='treatment')
+
+plt.vlines(x=1, ymin=2, ymax=4, alpha=0.5)
+plt.text(1.02, 3.03, '$\delta$', fontsize=18)
+
+plt.vlines(x=1, ymin=1, ymax=2, alpha=0.5)
+plt.text(1.02, 1.5, '$\\tau$', fontsize=18)
+
+ax.set_xticks([0,1])
+ax.set_yticks([1, 2, 4])
+
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+
+def formatter(value, tick_number):
+    if value == 1:
+        return '$Y_0^a \equiv \\alpha$'
+    elif value == 2:
+        return '$Y_1^1$'
+    elif value == 4:
+        return '$Y_1^0$'
+    else:
+        return None
+    
+ax.yaxis.set_major_formatter(plt.FuncFormatter(formatter))
+
+ax.set_xlabel('time', fontsize=18)
+
+plt.ylim(0.5, 4.5)
+plt.xlim(-.05, 1.075)
+plt.tight_layout()
+plt.savefig('images/decomposition.png', format='png', bbox_inches='tight')
+```
+![Decomposition of the potential outcomes $Y_1^a$.](images/decomposition.png)
+
+We then have for the difference in variance in temporal change
+
+\begin{align*}
+Var(Y_{1}^1 - Y_{0}^1) - Var(Y_{1}^0 - Y_{0}^0)
+& = Var(\delta) + 2Cov(\tau, \delta) \\
+& = Var(\delta) + 2\rho \,Var(\tau)^\frac{1}{2}Var(\delta)^\frac{1}{2}
+\end{align*}
+
+Here $\rho$ denotes the correlation between $\tau$, the change (or response) score under control,
+and $\delta$, the treatment effect.
+Note that this quantity is not observable since it contains information about the
+correlation between both potential outcomes $Y_1^0$ and $Y_1^1$.
+
+
+With this decomposition at hand, we are ready to derive restrictions
+on the standard deviation $\sigma_{\delta} = Var(\delta)^\frac{1}{2}$ of the treatment effect $\delta$.
+
+
+Let $\nu$ be the variability ratio defined with respect to the response variables $Y(a) = Y_{1}^a - Y_{0}^a$.
+Then, we have that
+\begin{align*}
+\nu^2 - 1
+& = \frac{Var(Y_{1}^1 - Y_{0}^1) - Var(Y_{1}^0 - Y_{0}^0)}{Var(Y_{1}^0 - Y_{0}^0)} \\
+& =  \frac{ Var(\delta) + 2\rho \,Var(\tau)^\frac{1}{2}Var(\delta)^\frac{1}{2} }{Var(\tau)}\\
+& =  \frac{ \sigma_{\delta}^2  + 2\rho \,\sigma_\tau \sigma_{\delta}}{\sigma_\tau^2}\\
+& =  \frac{1}{\sigma_\tau^2}(\sigma_{\delta} + \rho \,\sigma_\tau)^2  - \rho^2 .
+\end{align*}
+
+
+Now assume set $r := \nu^2 - 1$, then we see that we must have that $r\geq -\rho^2$, and we may write
+$|\sigma_{\delta} + \rho\, \sigma_\tau | = \sigma_\tau \sqrt{r+ \rho^2}$. Hence, we have the following
+compatible values for $\sigma_\delta$ 
+
+$$
+\begin{cases}
+\sigma_{\delta} = \sigma_\tau (\sqrt{r+ \rho^2} - \rho)
+    ;& r \geq 0 \\
+\sigma_{\delta} = 
+    \sigma_\tau (\pm\sqrt{r+ \rho^2} - \rho) 
+    ; & \rho \leq 0 \quad \text{and}\quad  -\rho^2 \leq r \leq 0 .
+\end{cases}
+$$
+
+The quantities $r$ and $\sigma_\tau$ are estimable from data,
+hence we obtain bounds on $\sigma_\delta$, namely
+
+$$
+\sigma_{\delta} \leq \sigma_\tau (1+ \sqrt{1+r}).
+$$
+
+If we are willing to make assumptions on the values of $\rho$,
+e.g. through domain knowledge, this estimate can be improved.
+In case $\rho=0$ we have that
+
+$$
+\sigma_{\delta} = \sigma_\tau \sqrt{r}.
+$$
+
+In a Bayesian interpretation, we may put a distribution on the values of
+$\rho$ representing our belief about the true value of $\rho$, which in turn
+defines a probability distribution around the values of $\sigma_{\delta}$.
+
+```{python, include=FALSE}
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig, ax = plt.subplots(figsize=(8, 5))
+
+x = np.linspace(0,1.5, 100)
+y0 = [-1 for _ in range(100)]
+y1 = [1 for _ in range(100)]
+
+ax.fill_between(x, y0, y1, facecolor='grey', interpolate=True, alpha=0.5)
+plt.text(0.5, 0, '$\\frac{\sigma_\delta}{\sigma_\\tau} = \\sqrt{r+\\rho^2} - \\rho$', fontsize=18)
+
+x = np.linspace(-1, 0, 100)
+y0 = [-1 for _ in range(100)]
+y1 = -np.sqrt(-x)
+ax.fill_between(x, y0, y1, facecolor='grey', interpolate=True, alpha=0.5)
+
+x = np.linspace(-1, 0, 100)
+y0 = [-1 for _ in range(100)]
+y1 = -np.sqrt(-x)
+ax.fill_between(x, y0, y1, facecolor='blue', interpolate=True, alpha=0., hatch='/')
+
+plt.text(-0.95, -0.25, '$\\frac{\sigma_\delta}{\sigma_\\tau} = |\\rho| -\\sqrt{\\rho^2 - |r|} $', fontsize=18)
+
+ax.set_yticks([-1,-.5,0,.5,1])
+ax.set_xlabel('$r = \\nu^2 - 1$', fontsize=18)
+
+ax.set_ylabel('$\\rho$', fontsize=18, rotation=0)
+
+plt.ylim(-1.1, 1.1)
+plt.xlim(-1.1, 1.5)
+plt.tight_layout()
+plt.savefig('images/compatible_areas.png', format='png', bbox_inches='tight')
+
+
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+
+colors = list(cm.rainbow(np.linspace(0, 0.2, 4))) + list(cm.rainbow(np.linspace(0.75, 1, 5)))
+
+fig, ax = plt.subplots(figsize=(10, 5), sharex='col', sharey='col')
+
+j = -1
+for r in [-0.85, -0.65, -0.25, -0.025]:
+    j += 1
+    x = np.linspace(-1, -np.sqrt(-r), 200)
+    y = np.sqrt(x ** 2 + r) - x
+    nu = np.sqrt(1 + r)
+    ax.plot(x, y, color=colors[j], label=f'$\\nu={nu:.2}$')
+    
+    y = - np.sqrt(x ** 2 + r) - x
+    ax.plot(x, y, color=colors[j])
+
+    
+x = np.linspace(-1, -0.001, 100)
+y = - x
+
+_ = ax.set_xticks([-1, -.5, 0, .5, 1])
+_ = ax.set_yticks([0,1,2])
+
+_ = ax.plot(x, y, linestyle='--', color='k', alpha=0.3)
+
+x = np.linspace(-1, 1, 100)
+r = 0.0
+nu = np.sqrt(1 + r)
+y = np.sqrt(x ** 2) - x
+ax.plot(x, y, label=f'$\\nu={nu:.2}$', color='k')
+
+x = np.linspace(-1, 1, 100)
+for r in [0.15, 0.3, 0.5, 1.0, 1.5]:
+    j += 1
+    nu = np.sqrt(1 + r)
+    y = np.sqrt(r + x ** 2) - x
+    ax.plot(x, y, label=f'$\\nu={nu:.2}$', color=colors[j])
+    
+_ = ax.set_xticks([-1,-.5,0,.5,1])
+_ = ax.set_yticks([0,1,2])
+_ = ax.legend()
+
+_ = ax.set_ylabel('$\\frac{\sigma_\delta}{\sigma_\\tau}$', fontsize=22, rotation=0)
+_ = ax.set_xlabel('$\\rho$', fontsize=18)
+_ = ax.legend()
+
+_ = ax.set_ylabel('$\\frac{\sigma_\delta}{\sigma_\\tau}$', fontsize=22, rotation=0)
+_ = ax.set_xlabel('$\\rho$', fontsize=18)
+plt.savefig('images/norm_sd_te.png', format='png', bbox_inches='tight')
+
+##############################
+##############################
+
+fig, ax = plt.subplots(figsize=(10, 5), sharex='col', sharey='col')
+
+a = 0.25
+nu_lb, nu_ub = np.sqrt(1 - a), np.sqrt(1 + a)
+
+r = -a
+x = np.linspace(-1, -np.sqrt(-r), 100)
+y = np.sqrt(x ** 2 + r) - x
+ax.plot(x, y, color='k')
+
+y = - np.sqrt(x ** 2 + r) - x
+ax.plot(x, y, color='k')
+
+_ = ax.set_xticks([-1, -.5, 0, .5, 1])
+_ = ax.set_yticks([0,1,2])
+
+ax.plot(x, y, linestyle='--', color='k', alpha=0.3)
+
+
+x = np.linspace(-1, 1, 100)
+r = a
+y = np.sqrt(r + x ** 2) - x
+_ = ax.plot(x, y, color='k')
+    
+_ = ax.set_xticks([-1,-.5,0,.5,1])
+_ = ax.set_yticks([0,1,2])
+_ = ax.set_ylabel('$\\frac{\sigma_\delta}{\sigma_\\tau}$', fontsize=22, rotation=0)
+_ = ax.set_xlabel('$\\rho$', fontsize=18)
+_ = plt.text(-0.48, .25, f'${nu_lb:.2} < \\nu < {nu_ub:.2}$', fontsize=18)
+
+_ = ax.set_ylabel('$\\frac{\sigma_\delta}{\sigma_\\tau}$', fontsize=22, rotation=0)
+_ = ax.set_xlabel('$\\rho$', fontsize=18)
+plt.savefig('images/compatible_area_bound.png', format='png', bbox_inches='tight')
+
+
+###############
+###############
+
+fig, ax = plt.subplots(figsize=(10, 6), sharex='col', sharey='col')
+
+colors = list(cm.rainbow(np.linspace(0, 0.2, 5))) + list(cm.rainbow(np.linspace(0.75, 1, 3)))
+
+j = -1
+for rho in [-1.0, -0.9, -0.7, -0.5, -0.25]:
+    j+=1
+    r = np.linspace(- rho ** 2, 0., 100)
+    nu = np.sqrt(1 + r)
+    y = -np.sqrt(r + rho ** 2) - rho
+    ax.plot(nu, y, color=colors[j])
+
+j =-1
+for rho in [-1.0, -0.9, -0.7, -0.5, -0.25, 0.0, 0.5, 1.0]:
+    j+=1
+    r = np.linspace(0 if rho>=0 else -rho ** 2, 1.3, 100)
+    nu = np.sqrt(1 + r)
+    y = np.sqrt(r + rho ** 2) - rho
+    ax.plot(nu, y, label=f'$\\rho={rho}$', color=colors[j] if rho!=0 else 'k')
+    
+_ = ax.set_xticks([0,.5,1, 1.5])
+_ = ax.set_yticks([0,1,2])
+_ = ax.legend()
+
+_ = ax.set_ylabel('$\\frac{\sigma_\delta}{\sigma_\\tau}$', fontsize=22, rotation=0)
+_ = ax.set_xlabel('$\\nu$', fontsize=18)
+plt.savefig('images/fixed_rho_curves.png', format='png', bbox_inches='tight')
+
+
+###############
+###############
+
+# fig, ax = plt.subplots(figsize=(8, 5))
+
+# x = np.linspace(-1, 1, 100)
+# for r in [0, 0.1, 0.3, 0.5, 1]:
+#     y = np.sqrt(r + x ** 2) - x
+#     ax.plot(x, y, label=f'r={r}')
+    
+# _ = ax.set_xticks([-1,-.5,0,.5,1])
+# _ = ax.set_yticks([0,1,2])
+# _ = ax.legend()
+# _ = ax.set_ylabel('$\\frac{\sigma_\delta}{\sigma_\\tau}$', fontsize=22, rotation=0)
+# _ = ax.set_xlabel('$\\rho$', fontsize=18)
+# plt.savefig('images/norm_sd_te.png', format='png', bbox_inches='tight')
+```
+
+![Compatible combinations of $r$ and $\rho$. Hatched area has two solutions for $\sigma_\delta$.](images/compatible_areas.png)
+
+
+![Normalized standard deviation of treatment effect.](images/norm_sd_te.png)
+
+
+![Variability ratio $\nu$ against relative treatment effect heterogeneity
+$\frac{\sigma_\delta}{\sigma_\tau}$ for different levels of assumed correlation $\rho$.](images/fixed_rho_curves.png)
+
+
+![Compatible region of $\rho$ and $\frac{\sigma_\delta}{\sigma_\tau}$ assuming $0.87 < \nu < 1.1$.](images/compatible_area_bound.png)
+
+
+## Coefficient of Variation Ratio 
+
+Assume that $\mu_0, \mu_0 > 0$, the we define the *coefficient of variation ratio* $\nu_c$ as
+$$\nu_c = \frac{\sigma_1}{\mu_1} \frac{\mu_0}{\sigma_0}.$$
+
+We have
+\begin{align*}
+\nu_c^2 - 1
+& = \frac{E[Y_{1}^0 - Y_{0}^0]Var(Y_{1}^1 - Y_{0}^1)}{E[Y_{1}^1 - Y_{0}^1]Var(Y_{1}^0 - Y_{0}^0)} -1\\
+& = \frac{\mu_\tau Var(Y_{1}^1 - Y_{0}^1) - (\mu_\tau + \mu_\delta)Var(Y_{1}^0 - Y_{0}^0)
+    }{(\mu_\tau+\mu_\delta)Var(Y_{1}^0 - Y_{0}^0)}\\
+& = \frac{\mu_\tau Var(\tau+\delta) - (\mu_\tau + \mu_\delta)Var(\tau)
+    }{(\mu_\tau + \mu_\delta)Var(\tau)}\\
+& = \frac{\mu_\tau (\sigma_\delta^2 + 2\rho \,\sigma_\tau \sigma_\delta)
+- \mu_\delta \sigma_\tau^2
+    }{(\mu_\tau + \mu_\delta) \sigma_\tau^2}\\
+& = \frac{ \left( \sigma_\delta
+    + \rho \sigma_\tau\right)^2 -\sigma_\tau^2 (\rho^2  + \frac{\mu_\delta}{\mu_\tau}) 
+    }{\sigma_\tau^2 (1 + \frac{\mu_\delta}{\mu_\tau})}\\
+& = \frac{1}{ 1 + \frac{\mu_\delta}{\mu_\tau}}
+\left(
+\frac{ \left( \sigma_\delta
+    + \rho \sigma_\tau\right)^2 }{\sigma_\tau^2}
+    - \left(\rho^2  + \frac{\mu_\delta}{\mu_\tau}\right)
+    \right)\\
+& = \frac{1}{ 1 + \frac{\mu_\delta}{\mu_\tau}}
+\left(
+\frac{ \left( \sigma_\delta
+    + \rho \sigma_\tau\right)^2 }{\sigma_\tau^2}
+    - \rho^2 
+    \right)
+    - \frac{\frac{\mu_\delta}{\mu_\tau}}{ 1 + \frac{\mu_\delta}{\mu_\tau}}
+\end{align*}
+
+Now, let $s:= \nu_c^2 - 1$ then
+
+\begin{align*}
+\left(1 + \frac{\mu_\delta}{\mu_\tau}\right)s + \frac{\mu_\delta}{\mu_\tau}
+& =
+ \frac{1}{\sigma_\tau^2}\left( \sigma_\delta
+    + \rho \sigma_\tau\right)^2
+    - \rho^2  
+\end{align*}
+Setting 
+$$
+r'=\left(1 + \frac{\mu_\delta}{\mu_\tau}\right)s + \frac{\mu_\delta}{\mu_\tau}
+$$
+we can repeat the calculation of the previous section, and derive a relationship between estimates
+on the CVR and the treatment effect heterogeneity.
+
+
+# Simulations
+
+```{python, include=TRUE}
+import numpy as np
+import pandas as pd
+
+np.random.seed(1)
+
+rho = -0.5
+mu_tau = 1
+sigma_tau = 1
+mu_delta = 0
+sigma_delta = 1
+
+N = 10000
+simulations = 1000
+
+
+def draw_potential_outcomes(N):
+    
+    zu = np.array(
+        [
+            np.random.normal(0, 1, size=N),
+            np.random.normal(0, 1, size=N)
+        ]
+    )
+    Sigma = np.array(
+            [
+                [sigma_tau ** 2, rho * sigma_delta * sigma_tau],
+                [rho * sigma_tau * sigma_delta, sigma_delta ** 2]
+            ]
+        )
+    Lu = np.linalg.cholesky(Sigma)
+    u = np.dot(Lu, zu)
+    
+    Y0 = mu_tau + u[0, :]
+    Y1 = Y0 + mu_delta + u[1, :]
+    return Y0, Y1
+
+def get_simulation_df(simulations, N):
+
+    df = pd.DataFrame()
+
+    for i in range(simulations):
+    
+        Y0, Y1 = draw_potential_outcomes(N)
+        # randomize N units into treatment and control
+        W = np.array([False for _ in range(N)])
+        N1 = int(N / 2)
+        N0 = N - N1
+        W[np.random.choice(range(N), N1, replace=False)] = True
+        
+        Y1_obs = Y1[W]
+        Y0_obs = Y0[~W]
+        
+        SD_treatment = Y1_obs.std(ddof=1)
+        SD_control = Y0_obs.std(ddof=1)
+        VR = SD_treatment / SD_control
+        
+        SD_delta = (Y1 - Y0).std()
+    
+        df = df.append(
+            {
+                'VR': VR,
+                'SD_delta': SD_delta
+            },
+            ignore_index=True
+        ) 
+    return df
+```
+
+```{python, include=FALSE}
+import matplotlib.pyplot as plt 
+plt.style.use('ggplot')
+
+df = get_simulation_df(simulations, N)
+fig, ax = plt.subplots(figsize=(8, 5))
+_ = plt.scatter(df.VR, df.SD_delta, alpha=0.5)
+_ = ax.axvline(x=1, color='k', alpha=0.5)
+_ = ax.axhline(y=sigma_delta, color='k', alpha=0.5)
+
+_ = plt.xticks(fontsize=18)
+_ = plt.yticks(fontsize=18)
+
+_ = ax.set_xlabel('VR', fontsize=18)
+_ = ax.set_ylabel('$SD_\delta$', fontsize=18, rotation=0)
+plt.tight_layout()
+
+fig.savefig('images/teh_no_vr.png', bbox_inches='tight')
+```
+
+
+```{python, include=FALSE}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt 
+plt.style.use('ggplot')
+
+Y0, Y1 = draw_potential_outcomes(N=1000)
+
+fig, ax = plt.subplots(figsize=(10, 6))
+fig.suptitle('Histogram of potential outcome responses')
+
+_ = ax.hist(Y0, bins=35, color='blue', histtype='step', label='$a=0$')
+_ = ax.hist(Y1, bins=35, color='red',  histtype='step', label='$a=1$')
+ax.legend()
+
+plt.tight_layout()
+plt.subplots_adjust(top=0.9, bottom=0.1)
+fig.savefig('images/hist_po.png', bbox_inches='tight')
+
+####################
+####################
+
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(10, 6), sharex='col', sharey='col')
+fig.suptitle('Potential outcome responses with baseline gauged to 0')
+
+for pr in Y0:
+    _ = axes[0, 0].plot([0, 1], [0, pr], linestyle='-', alpha=0.1, color='blue', label='$a=0$')
+    axes[0, 0].set_ylabel('response score')
+_ = axes[0, 1].hist(Y0, orientation="horizontal", color='blue', label='$a=0$',
+                    bins=35, histtype='step', density=True)
+axes[0, 1].legend()
+
+for ar in Y1:
+    _ = axes[1, 0].plot([0, 1], [0, ar], linestyle='-', alpha=0.1, color='red', label='$a=1$')
+axes[1, 0].set_ylabel('response score')
+_ = axes[1, 1].hist(Y1, orientation="horizontal", color='red', label='$a=1$',
+                    bins=35, histtype='step', density=True)
+axes[1, 1].legend()
+
+plt.tight_layout()
+plt.subplots_adjust(top=0.9, bottom=0.1)
+
+fig.savefig('images/gauged_to_zero.png', bbox_inches='tight')
+
+np.random.seed(0)
+# randomize N units into treatment and control
+W = np.array([False for _ in range(N)])
+W[np.random.choice(range(N), int(N / 2), replace=False)] = True
+
+
+fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 6))
+fig.suptitle('Individual treatment effect visualized as slope \n blue if treatment produces larger response, red otherwise')
+
+for pr, ar in zip(Y0, Y1):
+    _ = axes.plot([0, 1], [pr, ar], linestyle='-', alpha=0.1, color='blue' if ar > pr else 'red')
+
+axes.set_ylabel('response score')
+
+plt.tight_layout()
+plt.subplots_adjust(top=0.9, bottom=0.1)
+
+fig.savefig('images/positive_and_negative_effects.png', bbox_inches='tight')
+```
+
+![Simulated data of 10000 units with $\nu=1$ and $\sigma_\delta=0$.](images/teh_no_vr.png)
+
+![Histogram of potential outcome responses for 1000 units.](images/hist_po.png)
+
+![Potential outcome responses with baseline gauged to 0 for 1000 units.](images/gauged_to_zero.png)
+
+![Potential outcome responses for 1000 units showing positive and negative effects.](images/positive_and_negative_effects.png)
+
+
+
+# Conclusion
+The variability ratio (VR) effect statistic [defined in @hedges1995sex; and proposed in @nakagawa2015meta]
+has been used extensively in order to study treatment effect heterogeneity (TEH) in clinical studies.
+While a VR that is different from one is widely acknowledged to implicate an individual treatment effect
+the exact relationship between those two quantities is not discussed in detail. 
+
+In this note we derived an analytic expression that connects the VR and the
+standard deviation of the treatment effect.
+
+We show that in case $VR=1$,
+the standard deviation of the treatment effect is at most twice the size of the standard deviation
+of the response under placebo.
+Moreover, if on is willing to make assumptions on the non-negativity of an unobserved
+quantity this implies a constant treatment effect.
+We illustrate our finding with visualizations and a simulation.
+
+# References
