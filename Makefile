@@ -8,5 +8,8 @@ clean:
 	rm -rf *.png
 	rm -rf build
 
-report:
+plots:
+	python plots.py
+
+pdf: plots
 	Rscript render.R
