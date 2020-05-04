@@ -222,11 +222,6 @@ In a Bayesian interpretation, we may put a distribution on the values of
 $\rho$ representing our belief about the true value of $\rho$, which in turn
 defines a probability distribution around the values of $\sigma_{\delta}$.
 
-$$
-\begin{align*}
-
-\end{align*}
-$$
 
 # Simulations
 In this section we conduct a simulation that illustrates the compatibility of a variability ratio of $1$
